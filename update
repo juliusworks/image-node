@@ -6,7 +6,7 @@ set -o pipefail
 CONFIG=$(cat Dockerfile)
 TAG=""
 
-if [[ $CONFIG =~ base\-([0-9\.]+) ]]; then
+if [[ $CONFIG =~ node:([0-9\.]+) ]]; then
 	TAG=${BASH_REMATCH[1]}
 else
 	echo "Could not find version"
@@ -14,7 +14,7 @@ else
 fi
 
 echo "Building"
-docker build -t docker.thuz.io/ops/image-node-alpine-yarn:$TAG -f Dockerfile .
+docker build --no-cache -t docker.thuz.io/ops/image-node-alpine-yarn:$TAG -f Dockerfile .
 
 echo "Tagging"
 docker tag docker.thuz.io/ops/image-node-alpine-yarn:$TAG docker.thuz.io/ops/image-node-alpine-yarn:latest
