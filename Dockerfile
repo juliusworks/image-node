@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:6.9
+FROM mhart/alpine-node:7.7.1
 
 RUN apk add --no-cache python make gcc g++ bash git nano curl \
 	&& mkdir -p /opt \
