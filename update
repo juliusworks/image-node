@@ -8,9 +8,13 @@ LATEST=node7.dockerfile
 for DOCKERFILE in dockerfiles/*.dockerfile; do
 	CONFIG=$(cat $DOCKERFILE)
 	TAG=""
+	TAG_MAJOR=""
+	TAG_MAJOR_MINOR=""
 
-	if [[ $CONFIG =~ node:([0-9\.]+) ]]; then
+	if [[ $CONFIG =~ node:((([0-9]+).([0-9]+)).([0-9]+)) ]]; then
 		TAG=${BASH_REMATCH[1]}
+		TAG_MAJOR=${BASH_REMATCH[3]}
+		TAG_MAJOR_MINOR=${BASH_REMATCH[2]}
 	else
 		echo "Could not find version"
 		exit 1
@@ -19,14 +23,21 @@ for DOCKERFILE in dockerfiles/*.dockerfile; do
 	echo "Building $DOCKERFILE"
 	docker build --no-cache -t juliusworks/node-alpine-yarn:$TAG -f $DOCKERFILE .
 
+	echo "Tagging $TAG as $TAG_MAJOR_MINOR"
+	docker tag juliusworks/node-alpine-yarn:$TAG juliusworks/node-alpine-yarn:$TAG_MAJOR_MINOR
+
+	echo "Tagging $TAG as $TAG_MAJOR"
+	docker tag juliusworks/node-alpine-yarn:$TAG juliusworks/node-alpine-yarn:$TAG_MAJOR
+
 	if [ "$(basename $DOCKERFILE)" == "$LATEST" ]; then
-		echo "Tagging $DOCKERFILE as latest"
+		echo "Tagging $TAG as latest"
 		docker tag juliusworks/node-alpine-yarn:$TAG juliusworks/node-alpine-yarn:latest
 	fi
 
-
 	echo "Pushing $DOCKERFILE"
 	docker push juliusworks/node-alpine-yarn:$TAG
+	docker push juliusworks/node-alpine-yarn:$TAG_MAJOR_MINOR
+	docker push juliusworks/node-alpine-yarn:$TAG_MAJOR
 
 	if [ "$(basename $DOCKERFILE)" == "$LATEST" ]; then
 		docker push juliusworks/node-alpine-yarn:latest
