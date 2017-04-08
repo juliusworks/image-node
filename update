@@ -3,22 +3,32 @@
 set -e
 set -o pipefail
 
-CONFIG=$(cat Dockerfile)
-TAG=""
+LATEST=node7.dockerfile
 
-if [[ $CONFIG =~ node:([0-9\.]+) ]]; then
-	TAG=${BASH_REMATCH[1]}
-else
-	echo "Could not find version"
-	exit 1
-fi
+for DOCKERFILE in dockerfiles/*.dockerfile; do
+	CONFIG=$(cat $DOCKERFILE)
+	TAG=""
 
-echo "Building"
-docker build --no-cache -t docker.thuz.io/ops/image-node-alpine-yarn:$TAG -f Dockerfile .
+	if [[ $CONFIG =~ node:([0-9\.]+) ]]; then
+		TAG=${BASH_REMATCH[1]}
+	else
+		echo "Could not find version"
+		exit 1
+	fi
 
-echo "Tagging"
-docker tag docker.thuz.io/ops/image-node-alpine-yarn:$TAG docker.thuz.io/ops/image-node-alpine-yarn:latest
+	echo "Building $DOCKERFILE"
+	docker build --no-cache -t juliusworks/node-alpine-yarn:$TAG -f $DOCKERFILE .
 
-echo "Pushing"
-docker push docker.thuz.io/ops/image-node-alpine-yarn:$TAG
-docker push docker.thuz.io/ops/image-node-alpine-yarn:latest
+	if [ "$(basename $DOCKERFILE)" == "$LATEST" ]; then
+		echo "Tagging $DOCKERFILE as latest"
+		docker tag juliusworks/node-alpine-yarn:$TAG juliusworks/node-alpine-yarn:latest
+	fi
+
+
+	echo "Pushing $DOCKERFILE"
+	docker push juliusworks/node-alpine-yarn:$TAG
+
+	if [ "$(basename $DOCKERFILE)" == "$LATEST" ]; then
+		docker push juliusworks/node-alpine-yarn:latest
+	fi
+done
