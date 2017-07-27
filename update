@@ -21,25 +21,25 @@ for DOCKERFILE in dockerfiles/*.dockerfile; do
 	fi
 
 	echo "Building $DOCKERFILE"
-	docker build --no-cache -t juliusworks/node-alpine-yarn:$TAG -f $DOCKERFILE .
+	docker build --no-cache -t juliusworks/node:$TAG -f $DOCKERFILE .
 
 	echo "Tagging $TAG as $TAG_MAJOR_MINOR"
-	docker tag juliusworks/node-alpine-yarn:$TAG juliusworks/node-alpine-yarn:$TAG_MAJOR_MINOR
+	docker tag juliusworks/node:$TAG juliusworks/node:$TAG_MAJOR_MINOR
 
 	echo "Tagging $TAG as $TAG_MAJOR"
-	docker tag juliusworks/node-alpine-yarn:$TAG juliusworks/node-alpine-yarn:$TAG_MAJOR
+	docker tag juliusworks/node:$TAG juliusworks/node:$TAG_MAJOR
 
 	if [ "$(basename $DOCKERFILE)" == "$LATEST" ]; then
 		echo "Tagging $TAG as latest"
-		docker tag juliusworks/node-alpine-yarn:$TAG juliusworks/node-alpine-yarn:latest
+		docker tag juliusworks/node:$TAG juliusworks/node:latest
 	fi
 
 	echo "Pushing $DOCKERFILE"
-	docker push juliusworks/node-alpine-yarn:$TAG
-	docker push juliusworks/node-alpine-yarn:$TAG_MAJOR_MINOR
-	docker push juliusworks/node-alpine-yarn:$TAG_MAJOR
+	docker push juliusworks/node:$TAG
+	docker push juliusworks/node:$TAG_MAJOR_MINOR
+	docker push juliusworks/node:$TAG_MAJOR
 
 	if [ "$(basename $DOCKERFILE)" == "$LATEST" ]; then
-		docker push juliusworks/node-alpine-yarn:latest
+		docker push juliusworks/node:latest
 	fi
 done
