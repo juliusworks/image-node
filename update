@@ -5,7 +5,7 @@ set -o pipefail
 
 LATEST=node9.dockerfile
 
-for DOCKERFILE in dockerfiles/*.dockerfile; do
+for DOCKERFILE in dockerfiles/**/*.dockerfile; do
 	CONFIG=$(cat $DOCKERFILE)
 	TAG=""
 	TAG_MAJOR=""
@@ -20,6 +20,12 @@ for DOCKERFILE in dockerfiles/*.dockerfile; do
 		exit 1
 	fi
 
+	if [[ $DOCKERFILE == *"light"* ]]; then
+		TAG="$TAG-light"
+		TAG_MAJOR="$TAG_MAJOR-light"
+		TAG_MAJOR_MINOR="$TAG_MAJOR_MINOR-light"
+	fi
+
 	echo "Building $DOCKERFILE"
 	docker build --no-cache -t juliusworks/node:$TAG -f $DOCKERFILE .
 
@@ -31,7 +37,12 @@ for DOCKERFILE in dockerfiles/*.dockerfile; do
 
 	if [ "$(basename $DOCKERFILE)" == "$LATEST" ]; then
 		echo "Tagging $TAG as latest"
-		docker tag juliusworks/node:$TAG juliusworks/node:latest
+		if [[ $DOCKERFILE == *"light"* ]]; then
+			docker tag juliusworks/node:$TAG juliusworks/node:latest-light
+			docker tag juliusworks/node:$TAG juliusworks/node:light
+		else
+			docker tag juliusworks/node:$TAG juliusworks/node:latest
+		fi
 	fi
 
 	echo "Pushing $DOCKERFILE"
@@ -40,6 +51,11 @@ for DOCKERFILE in dockerfiles/*.dockerfile; do
 	docker push juliusworks/node:$TAG_MAJOR
 
 	if [ "$(basename $DOCKERFILE)" == "$LATEST" ]; then
-		docker push juliusworks/node:latest
+		if [[ $DOCKERFILE == *"light"* ]]; then
+			docker push juliusworks/node:latest-light
+			docker push juliusworks/node:light
+		else
+			docker push juliusworks/node:latest
+		fi
 	fi
 done

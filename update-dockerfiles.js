@@ -80,35 +80,38 @@ async function run() {
 	}
 
 	// Load our current node files
-	const dockerfiles = path.join(__dirname, 'dockerfiles/')
-	const files = fs.readdirSync(dockerfiles).map(file => path.join(dockerfiles, file))
 	let commits = 0
 
-	for(const file of files) {
-		let content = fs.readFileSync(file).toString()
-		const match = content.match(/node:([0-9.]+)/)
+	for(const variant of [ 'full', 'light' ]) {
+		const dockerfiles = path.join(__dirname, 'dockerfiles', variant)
+		const files = fs.readdirSync(dockerfiles).map(file => path.join(dockerfiles, file))
 
-		if(!match) {
-			continue
+		for(const file of files) {
+			let content = fs.readFileSync(file).toString()
+			const match = content.match(/node:([0-9.]+)/)
+
+			if(!match) {
+				continue
+			}
+
+			const version = SemVer.parse(match[1])
+
+			if(!SemVer.gt(version, versions[version.major])) {
+				continue
+			}
+
+			const newVersion = SemVer.stringify(versions[version.major])
+			content = content.replace(/node:([0-9.]+)/, `node:${newVersion}`)
+			fs.writeFileSync(file, content)
+
+			child_process.execFileSync('git', [
+				'commit',
+				'-m', `Updated ${variant}/${path.basename(file)} from ${SemVer.stringify(version)} to ${newVersion}`,
+				file
+			])
+
+			commits++
 		}
-
-		const version = SemVer.parse(match[1])
-
-		if(!SemVer.gt(version, versions[version.major])) {
-			continue
-		}
-
-		const newVersion = SemVer.stringify(versions[version.major])
-		content = content.replace(/node:([0-9.]+)/, `node:${newVersion}`)
-		fs.writeFileSync(file, content)
-
-		child_process.execFileSync('git', [
-			'commit',
-			'-m', `Updated ${path.basename(file)} from ${SemVer.stringify(version)} to ${newVersion}`,
-			file
-		])
-
-		commits++
 	}
 
 	if(commits === 0) {
