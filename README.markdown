@@ -18,7 +18,6 @@ The images are based on [mhart/alpine-node](https://github.com/mhart/alpine-node
 The following major node versions are updated regularly:
 
 * Node 6
-* Node 7
 * Node 8
 
 The `latest` tag will always point towards the latest major release of Node, regardless of LTS status.
