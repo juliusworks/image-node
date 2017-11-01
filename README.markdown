@@ -19,6 +19,7 @@ The following major node versions are updated regularly:
 
 * Node 6
 * Node 8
+* Node 9
 
 The `latest` tag will always point towards the latest major release of Node, regardless of LTS status.
 
