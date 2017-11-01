@@ -7,7 +7,7 @@ Base images used at Julius, all images include the following:
 * yarn
 * curl
 * git
-* bash
+* zsh (also aliased as bash)
 * nano
 * Build Tools + Python for node-gyp
 
