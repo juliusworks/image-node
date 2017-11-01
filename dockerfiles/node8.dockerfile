@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:8.7.0
+FROM mhart/alpine-node:8.9.0
 
 RUN apk add --no-cache python make gcc g++ bash git nano curl \
 	&& rm -fr /usr/local/share/yarn && mkdir -p /usr/local/share/yarn \
