@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:8.9.1
+FROM mhart/alpine-node:8.9.3
 
 RUN apk add --no-cache bash git nano curl libintl gettext \
 	&& cp /usr/bin/envsubst /usr/local/bin/envsubst \
