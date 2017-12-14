@@ -1,6 +1,8 @@
 FROM mhart/alpine-node:6.12.0
 
-RUN apk add --no-cache python make gcc g++ bash git nano curl \
+RUN apk add --no-cache python make gcc g++ bash git nano curl libintl gettext \
+	&& cp /usr/bin/envsubst /usr/local/bin/envsubst \
+	&& apk del gettext \
 	&& mkdir -p /opt \
 	&& cd /opt \
 	&& curl -L -s https://yarnpkg.com/latest.tar.gz > yarn.tgz \
