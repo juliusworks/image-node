@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:6.12.0
+FROM mhart/alpine-node:6.12.2
 
 RUN apk add --no-cache python make gcc g++ bash git nano curl libintl gettext \
 	&& cp /usr/bin/envsubst /usr/local/bin/envsubst \
