@@ -3,7 +3,7 @@
 set -e
 set -o pipefail
 
-LATEST=node9.dockerfile
+LATEST=node10.dockerfile
 
 for DOCKERFILE in dockerfiles/**/*.dockerfile; do
 	CONFIG=$(cat $DOCKERFILE)
