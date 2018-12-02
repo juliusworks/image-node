@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:6.14.4
+FROM mhart/alpine-node:6.15.0
 
 RUN apk add --no-cache bash git nano curl \
 	&& mkdir -p /opt \
